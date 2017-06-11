@@ -47,6 +47,8 @@ storeSchema.index({
   description: 'text',
 })
 
+storeSchema.index({ location: '2dsphere' })
+
 storeSchema.pre('save', async function(next) {
   if (!this.isModified('name')) {
     next()
@@ -68,5 +70,12 @@ storeSchema.statics.getTagsList = function() {
     { $sort: { count: -1, _id: 1 } },
   ])
 }
+const StoreModel = mongoose.model('Store', storeSchema)
 
-module.exports = mongoose.model('Store', storeSchema)
+StoreModel.on('index', function(error) {
+  if (error) {
+    console.log(error.message)
+  }
+})
+
+module.exports = StoreModel
